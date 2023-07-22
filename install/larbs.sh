@@ -183,7 +183,7 @@ setup() {
 	systemctl start cronie.service
 
 	#SKYPE
-	echo 'session    optional     pam_gnome_keyring.so auto_start' | tee -a /etc/pam.d/login > /dev/null
+	echo 'session	optional	pam_gnome_keyring.so auto_start' | tee -a /etc/pam.d/login > /dev/null
 	echo 'password	optional	pam_gnome_keyring.so' | tee -a /etc/pam.d/login > /dev/null
 
 	#KVM
@@ -203,6 +203,9 @@ setup() {
 	#GENERAL
 	timedatectl set-timezone "Europe/Moscow"
 	
+	#KEYBOARD
+	sudo localectl set-x11-keymap us,ru pc105 "" grp:alt_shift_toggle
+
 	#MONITOR SLEEP
 	xset -dpms
 }
