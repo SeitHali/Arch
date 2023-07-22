@@ -163,6 +163,50 @@ putgitrepo() {
 	sudo -u "$name" cp -rfT "$dir" "$2"
 }
 
+setup() {
+	whiptail --infobox "Make initial setup and run services..." 7 60
+
+	#mount disk
+	mkdir -p /mnt/nvme /mnt/media /mnt/nas
+	printf '\nUUID=95552dc0-e9ea-431a-b5f9-8c1f4ba70d16 	/mnt/nvme     	btrfs     	rw,relatime,ssd,space_cache=v2,nofail	0 0' | sudo tee -a /etc/fstab
+	printf '\nUUID=39f971a9-7f74-4a4e-a9c6-b0263b802ca5		/mnt/media     	ext4     	defaults,nofail 0 0' | sudo tee -a /etc/fstab
+	printf '\nUUID=281bbdb5-2851-46a9-ae56-001a2c9fd7ef		/mnt/nas     	ext4     	defaults,nofail 0 0' | sudo tee -a /etc/fstab
+
+	systemctl daemon-reload && mount -a
+
+	#BLE
+	systemctl enable bluetooth
+	systemctl start bluetooth
+
+	#CRONE
+	systemctl start cronie
+	systemctl start cronie.service
+
+	#SKYPE
+	echo 'session    optional     pam_gnome_keyring.so auto_start' | tee -a /etc/pam.d/login > /dev/null
+	echo 'password	optional	pam_gnome_keyring.so' | tee -a /etc/pam.d/login > /dev/null
+
+	#KVM
+	modprobe -r kvm_amd
+	modprobe kvm_amd nested=1
+	echo "options kvm_amd nested=1" | tee -a /etc/modprobe.d/kvm_amd.conf
+	systemctl enable libvirtd.service
+	systemctl start libvirtd.service
+	sed -i '/unix_sock_group = "libvirt"/s/^#//g' /etc/libvirt/libvirtd.conf
+	sed -i '/unix_sock_rw_perms = "0770"/s/^#//g' /etc/libvirt/libvirtd.conf
+	usermod -a -G libvirt $(whoami)
+
+	#GIT CONFIG
+	git config --global user.email "seithalilev@gmail.com"
+	git config --global user.name "Roman Seithalilev"
+
+	#GENERAL
+	timedatectl set-timezone "Europe/Moscow"
+	
+	#MONITOR SLEEP
+	xset -dpms
+}
+
 finalize() {
 	whiptail --title "All done!" \
 		--msgbox "Congrats! Provided there were no hidden errors, the script completed successfully and all the programs and configuration files should be in place.\\n\\nTo run the new graphical environment, log out and log back in as your new user, then run the command \"startx\" to start the graphical environment (it will start automatically in tty1).\\n\\n.t Luke" 13 80
