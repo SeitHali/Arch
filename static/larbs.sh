@@ -279,8 +279,8 @@ preinstallmsg || error "User exited."
 ### The rest of the script requires no user input.
 
 # Refresh Arch keyrings.
-refreshkeys ||
-	error "Error automatically refreshing Arch keyring. Consider doing so manually."
+#refreshkeys ||
+#	error "Error automatically refreshing Arch keyring. Consider doing so manually."
 
 for x in curl ca-certificates base-devel git ntp zsh; do
 	whiptail --title "LARBS Installation" \
