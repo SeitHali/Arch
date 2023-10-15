@@ -152,8 +152,7 @@ pipinstall() {
 }
 
 installationloop() {
-	([ -f $progsfile ] && cp $progsfile /tmp/progs.csv) ||
-		curl -Ls "$progsfile" | sed '/^#/d' >/tmp/progs.csv
+	([ -f $progsfile ] && cp $progsfile /tmp/progs.csv) || curl -Ls "$progsfile"
 	total=$(wc -l </tmp/progs.csv)
 	aurinstalled=$(pacman -Qqm)
 	while IFS=, read -r tag program comment; do
