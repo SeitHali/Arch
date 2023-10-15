@@ -18,6 +18,25 @@ installpkg() {
 	pacman --noconfirm --needed -S "$1" >/dev/null 2>&1
 }
 
+refreshkeys() {
+	case "$(readlink -f /sbin/init)" in
+	*systemd*)
+		whiptail --infobox "Refreshing Arch Keyring..." 7 40
+		pacman --noconfirm -S archlinux-keyring >/dev/null 2>&1
+		;;
+	*)
+		whiptail --infobox "Enabling Arch Repositories for more a more extensive software collection..." 7 40
+		pacman --noconfirm --needed -S \
+			artix-keyring artix-archlinux-support >/dev/null 2>&1
+		grep -q "^\[extra\]" /etc/pacman.conf ||
+			echo "[extra]
+Include = /etc/pacman.d/mirrorlist-arch" >>/etc/pacman.conf
+		pacman -Sy --noconfirm >/dev/null 2>&1
+		pacman-key --populate archlinux >/dev/null 2>&1
+		;;
+	esac
+}
+
 error() {
 	# Log to stderr and exit with failure.
 	printf "%s\n" "$1" >&2
