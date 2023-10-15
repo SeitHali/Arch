@@ -26,7 +26,7 @@ error() {
 
 welcomemsg() {
 	whiptail --title "Welcome!" \
-		--msgbox "Welcome to Luke's Auto-Rice Bootstrapping Script!\\n\\nThis script will automatically install a fully-featured Linux desktop, which I use as my main machine.\\n\\n-Luke" 10 60
+		--msgbox "Welcome to my auto-deploy script!" 10 60
 
 	whiptail --title "Important Note!" --yes-button "All ready!" \
 		--no-button "Return..." \
@@ -237,6 +237,10 @@ preinstallmsg || error "User exited."
 
 ### The rest of the script requires no user input.
 
+# Refresh Arch keyrings.
+refreshkeys ||
+	error "Error automatically refreshing Arch keyring. Consider doing so manually."
+
 for x in curl ca-certificates base-devel git ntp zsh; do
 	whiptail --title "LARBS Installation" \
 		--infobox "Installing \`$x\` which is required to install and configure other programs." 8 70
@@ -275,7 +279,7 @@ manualinstall yay || error "Failed to install AUR helper."
 installationloop
 
 #start setup
-setup
+#setup
 
 # Allow wheel users to sudo with password and allow several system commands
 # (like `shutdown` to run without password).
