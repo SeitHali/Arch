@@ -159,6 +159,7 @@ installationloop() {
 		cp "$progsfile" /tmp/progs.csv 
 	else
 		raise error "file $progsfile not found"
+	fi
 
 	total=$(wc -l </tmp/progs.csv)
 	aurinstalled=$(pacman -Qqm)
