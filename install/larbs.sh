@@ -152,7 +152,14 @@ pipinstall() {
 }
 
 installationloop() {
-	([ -f "$progsfile" ] && cp "$progsfile" /tmp/progs.csv) 
+	#([ -f "$progsfile" ] && cp "$progsfile" /tmp/progs.csv) 
+
+	if [ -f $FILE ]; then
+		echo "File $progsfile exists."
+		cp "$progsfile" /tmp/progs.csv 
+	else
+		raise error "file $progsfile not found"
+
 	total=$(wc -l </tmp/progs.csv)
 	aurinstalled=$(pacman -Qqm)
 	while IFS=, read -r tag program comment; do
