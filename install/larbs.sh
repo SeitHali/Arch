@@ -158,7 +158,7 @@ installationloop() {
 		echo "File $progsfile exists."
 		cp "$progsfile" /tmp/progs.csv 
 	else
-		raise error "file $progsfile not found"
+		exit 1
 	fi
 
 	total=$(wc -l </tmp/progs.csv)
