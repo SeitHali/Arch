@@ -243,65 +243,65 @@ finalize() {
 		--msgbox "Congrats! Provided there were no hidden errors, the script completed successfully and all the programs and configuration files should be in place.\\n\\nTo run the new graphical environment, log out and log back in as your new user, then run the command \"startx\" to start the graphical environment (it will start automatically in tty1).\\n\\n.t Luke" 13 80
 }
 
-# ### THE ACTUAL SCRIPT ###
+### THE ACTUAL SCRIPT ###
 
-# ### This is how everything happens in an intuitive format and order.
+### This is how everything happens in an intuitive format and order.
 
-# # Check if user is root on Arch distro. Install whiptail.
-# pacman --noconfirm --needed -Sy libnewt ||
-# 	error "Are you sure you're running this as the root user, are on an Arch-based distribution and have an internet connection?"
+# Check if user is root on Arch distro. Install whiptail.
+pacman --noconfirm --needed -Sy libnewt ||
+	error "Are you sure you're running this as the root user, are on an Arch-based distribution and have an internet connection?"
 
-# # Welcome user and pick dotfiles.
-# welcomemsg || error "User exited."
+# Welcome user and pick dotfiles.
+welcomemsg || error "User exited."
 
-# # Get and verify username and password.
-# getuserandpass || error "User exited."
+# Get and verify username and password.
+getuserandpass || error "User exited."
 
-# # Give warning if user already exists.
-# usercheck || error "User exited."
+# Give warning if user already exists.
+usercheck || error "User exited."
 
-# # Last chance for user to back out before install.
-# preinstallmsg || error "User exited."
+# Last chance for user to back out before install.
+preinstallmsg || error "User exited."
 
-# ### The rest of the script requires no user input.
+### The rest of the script requires no user input.
 
 # #get script path
 scriptpath="$(cd -- "$scriptpath" && pwd)"    # absolutized and normalized
 
-# # Refresh Arch keyrings.
-# refreshkeys ||
-# 	error "Error automatically refreshing Arch keyring. Consider doing so manually."
+# Refresh Arch keyrings.
+refreshkeys ||
+	error "Error automatically refreshing Arch keyring. Consider doing so manually."
 
-# for x in curl ca-certificates base-devel git ntp zsh; do
-# 	whiptail --title "LARBS Installation" \
-# 		--infobox "Installing \`$x\` which is required to install and configure other programs." 8 70
-# 	installpkg "$x"
-# done
+for x in curl ca-certificates base-devel git ntp zsh; do
+	whiptail --title "LARBS Installation" \
+		--infobox "Installing \`$x\` which is required to install and configure other programs." 8 70
+	installpkg "$x"
+done
 
-# whiptail --title "LARBS Installation" \
-# 	--infobox "Synchronizing system time to ensure successful and secure installation of software..." 8 70
-# ntpd -q -g >/dev/null 2>&1
+whiptail --title "LARBS Installation" \
+	--infobox "Synchronizing system time to ensure successful and secure installation of software..." 8 70
+ntpd -q -g >/dev/null 2>&1
 
-# adduserandpass || error "Error adding username and/or password."
+adduserandpass || error "Error adding username and/or password."
 
-# [ -f /etc/sudoers.pacnew ] && cp /etc/sudoers.pacnew /etc/sudoers # Just in case
+[ -f /etc/sudoers.pacnew ] && cp /etc/sudoers.pacnew /etc/sudoers # Just in case
 
-# # Allow user to run sudo without password. Since AUR programs must be installed
-# # in a fakeroot environment, this is required for all builds with AUR.
-# trap 'rm -f /etc/sudoers.d/larbs-temp' HUP INT QUIT TERM PWR EXIT
-# echo "%wheel ALL=(ALL) NOPASSWD: ALL" >/etc/sudoers.d/larbs-temp
+# Allow user to run sudo without password. Since AUR programs must be installed
+# in a fakeroot environment, this is required for all builds with AUR.
+trap 'rm -f /etc/sudoers.d/larbs-temp' HUP INT QUIT TERM PWR EXIT
+echo "%wheel ALL=(ALL) NOPASSWD: ALL" >/etc/sudoers.d/larbs-temp
 
-# # Make pacman colorful, concurrent downloads and Pacman eye-candy.
-# grep -q "ILoveCandy" /etc/pacman.conf || sed -i "/#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
-# sed -Ei "s/^#(ParallelDownloads).*/\1 = 5/;/^#Color$/s/#//" /etc/pacman.conf
+# Make pacman colorful, concurrent downloads and Pacman eye-candy.
+grep -q "ILoveCandy" /etc/pacman.conf || sed -i "/#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
+sed -Ei "s/^#(ParallelDownloads).*/\1 = 5/;/^#Color$/s/#//" /etc/pacman.conf
 
-# # Use all cores for compilation.
-# sed -i 's/-march=x86-64 -mtune=generic/-march=native/g' /etc/makepkg.conf
-# sed -i 's|#MAKEFLAGS="-j2"|MAKEFLAGS="-j$(nproc)"|g' /etc/makepkg.conf
-# sed -i 's|#BUILDDIR=/tmp/makepkg|BUILDDIR=/tmp/makepkg|g' /etc/makepkg.conf
-# sed -i 's|#COMPRESSZST=(zstd -c -z -q -)|#COMPRESSZST=(zstd -1 -c -z -q -)|g' /etc/makepkg.conf
+# Use all cores for compilation.
+sed -i 's/-march=x86-64 -mtune=generic/-march=native/g' /etc/makepkg.conf
+sed -i 's|#MAKEFLAGS="-j2"|MAKEFLAGS="-j$(nproc)"|g' /etc/makepkg.conf
+sed -i 's|#BUILDDIR=/tmp/makepkg|BUILDDIR=/tmp/makepkg|g' /etc/makepkg.conf
+sed -i 's|#COMPRESSZST=(zstd -c -z -q -)|#COMPRESSZST=(zstd -1 -c -z -q -)|g' /etc/makepkg.conf
 
-# manualinstall yay || error "Failed to install AUR helper."
+manualinstall yay || error "Failed to install AUR helper."
 
 # The command that does all the installing. Reads the progs.csv file and
 # installs each needed program the way required. Be sure to run this only after
