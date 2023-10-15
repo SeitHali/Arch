@@ -158,6 +158,7 @@ installationloop() {
 		echo "File $progsfile exists."
 		cp "$progsfile" /tmp/progs.csv 
 	else
+		echo "File $progsfile not exists."
 		exit 1
 	fi
 
