@@ -11,7 +11,7 @@ progsfile="progs.csv"
 aurhelper="yay"
 repobranch="master"
 export TERM=ansi
-
+scriptpath="$(dirname -- "${BASH_SOURCE[0]}")"  
 ### FUNCTIONS ###
 
 installpkg() {
@@ -154,6 +154,9 @@ pipinstall() {
 installationloop() {
 	#([ -f "$progsfile" ] && cp "$progsfile" /tmp/progs.csv) 
 
+	$progsfile="$scriptpath/$progsfile"
+	echo $progsfile
+
 	if test -f "$progsfile"; then
 		cp "$progsfile" /tmp/progs.csv 
 	else
@@ -261,6 +264,9 @@ finalize() {
 # preinstallmsg || error "User exited."
 
 # ### The rest of the script requires no user input.
+
+# #get script path
+scriptpath="$(cd -- "$scriptpath" && pwd)"    # absolutized and normalized
 
 # # Refresh Arch keyrings.
 # refreshkeys ||
