@@ -7,7 +7,7 @@
 ### OPTIONS AND VARIABLES ###
 
 dotfilesrepo="https://github.com/lukesmithxyz/voidrice.git"
-progsfile=".progs.csv"
+progsfile="progs.csv"
 aurhelper="yay"
 repobranch="master"
 export TERM=ansi
@@ -154,12 +154,10 @@ pipinstall() {
 installationloop() {
 	#([ -f "$progsfile" ] && cp "$progsfile" /tmp/progs.csv) 
 
-	if [ -f $progsfile ]; then
-		echo "File $progsfile exists."
+	if test -f "$progsfile"; then
 		cp "$progsfile" /tmp/progs.csv 
 	else
 		error "File $progsfile not exists."
-		exit 1
 	fi
 
 	total=$(wc -l </tmp/progs.csv)
