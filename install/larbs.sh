@@ -154,13 +154,13 @@ pipinstall() {
 installationloop() {
 	#([ -f "$progsfile" ] && cp "$progsfile" /tmp/progs.csv) 
 
-	$progsfile="$scriptpath/$progsfile"
-	echo $progsfile
+	csvfile="$scriptpath/$progsfile"
+	echo $csvfile
 
-	if test -f "$progsfile"; then
-		cp "$progsfile" /tmp/progs.csv 
+	if test -f "$csvfile"; then
+		cp "$csvfile" /tmp/progs.csv 
 	else
-		error "File $progsfile not exists."
+		error "File $csvfile not exists."
 	fi
 
 	total=$(wc -l </tmp/progs.csv)
