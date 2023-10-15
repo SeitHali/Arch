@@ -154,7 +154,7 @@ pipinstall() {
 installationloop() {
 	#([ -f "$progsfile" ] && cp "$progsfile" /tmp/progs.csv) 
 
-	if [ -f $FILE ]; then
+	if [ -f $progsfile ]; then
 		echo "File $progsfile exists."
 		cp "$progsfile" /tmp/progs.csv 
 	else
